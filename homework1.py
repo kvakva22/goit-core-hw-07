@@ -11,6 +11,8 @@ def input_error(func):
             return "Give me the needed name"
         except TypeError:
             return "Some information was given wrong"
+        except AttributeError:
+            return "No dates of birthday were given"
 
     return inner
 
