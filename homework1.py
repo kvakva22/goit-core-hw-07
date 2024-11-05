@@ -19,6 +19,7 @@ def parse_input(user_input):
         cmd, *args = user_input.split()
         cmd = cmd.strip().lower()
         return cmd, *args
+        
 
 class Field:
     def __init__(self, value):
@@ -40,10 +41,11 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, value):
         try:
-            birthday=datetime.strptime(value, "%d.%m.%Y").date()
+            datetime.strptime(value, "%d.%m.%Y").date()
             super().__init__(value) 
         except ValueError:
-            raise("Invalid date format. Use DD.MM.YYYY")
+            return "Invalid date format. Use DD.MM.YYYY"
+        
 
 class Record:
     def __init__(self, name):
@@ -61,7 +63,7 @@ class Record:
         for phone in self.phones:
             if phone.value == remnum:
                  self.phones.remove(phone)
-                 return print(f"Запис з номером '{remnum}' видалено.")
+                 return f"Запис з номером '{remnum}' видалено."
         return f"Запис з номером '{remnum}' не знайдено."
 
     def edit_phone(self, oldnum, newnum):
@@ -194,13 +196,10 @@ def show_birthday(args, book: AddressBook):
 def birthdays(book: AddressBook):
     upcoming = book.get_upcoming_birthdays() 
     result = []
-    if result == None:
-        return f'Dates of birth not found'
     for el in upcoming:
         result.append(f"{el['name']}: {el['congratulation_date']}")
-    if not upcoming:
+    if len(result) == 0:
         return f'No birthdays are expected'
-
     return '\n'.join(result)
 
 
