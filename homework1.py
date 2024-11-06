@@ -11,8 +11,6 @@ def input_error(func):
             return "Give me the needed name"
         except TypeError:
             return "Some information was given wrong"
-        except AttributeError:
-            return "No dates of birthday were given"
 
     return inner
 
@@ -114,18 +112,19 @@ class AddressBook(UserDict):
         upcoming_birthdays = []
         today = date.today()
         for name, record in self.data.items():
-            birthday_date = datetime.strptime(record.birthday.value, "%d.%m.%Y").date()
-            birthday_this_year = birthday_date.replace(year=today.year)
+            if record.birthday != None:
+                birthday_date = datetime.strptime(record.birthday.value, "%d.%m.%Y").date()
+                birthday_this_year = birthday_date.replace(year=today.year)
         
-            if birthday_this_year < today:
-                birthday_this_year = birthday_this_year.replace(year=today.year+1)
-            if birthday_this_year.weekday() >= 5:
-                birthday_this_year = self.adjust_for_weekend(birthday_this_year)
+                if birthday_this_year < today:
+                    birthday_this_year = birthday_this_year.replace(year=today.year+1)
+                if birthday_this_year.weekday() >= 5:
+                    birthday_this_year = self.adjust_for_weekend(birthday_this_year)
             
 
-            if 0 <= (birthday_this_year - today).days <= days:
-                congratulation_date_str = self.date_to_string(birthday_this_year)
-                upcoming_birthdays.append( {"name": name, "congratulation_date": congratulation_date_str})
+                if 0 <= (birthday_this_year - today).days <= days:
+                    congratulation_date_str = self.date_to_string(birthday_this_year)
+                    upcoming_birthdays.append( {"name": name, "congratulation_date": congratulation_date_str})
 
         return upcoming_birthdays
 
@@ -197,8 +196,8 @@ def show_birthday(args, book: AddressBook):
 
 @input_error
 def birthdays(book: AddressBook):
-    upcoming = book.get_upcoming_birthdays() 
     result = []
+    upcoming = book.get_upcoming_birthdays() 
     for el in upcoming:
         result.append(f"{el['name']}: {el['congratulation_date']}")
     if len(result) == 0:
